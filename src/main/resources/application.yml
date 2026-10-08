@@ -1,0 +1,34 @@
+server:
+  port: 8004
+
+spring:
+  application:
+    name: strider-feed
+  profiles:
+    include: secret
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/strider?currentSchema=feed}
+    username: ${DB_USERNAME:strider}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}   # 로컬은 KAFKA_BOOTSTRAP_SERVERS=localhost:9092 로 override
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false   # consumer(strider-notification)가 타입헤더 무시하므로 끔
+
+logging:
+  level:
+    root: INFO
+    com.strider: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+
+cloudfront:
+  domain: dnimlqpigdwcn.cloudfront.net
